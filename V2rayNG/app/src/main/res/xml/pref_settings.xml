@@ -157,6 +157,23 @@
             android:summary="10808"
             android:title="@string/title_pref_socks_port" />
 
+        <Preference
+            android:key="pref_socks5_username"
+            android:title="@string/title_pref_socks5_username"
+            android:summary=""
+            android:selectable="true" />
+
+        <Preference
+            android:key="pref_socks5_password"
+            android:title="@string/title_pref_socks5_password"
+            android:summary=""
+            android:selectable="true" />
+
+        <Preference
+            android:key="pref_socks5_regenerate"
+            android:title="@string/title_pref_socks5_regenerate"
+            android:summary="@string/summary_pref_socks5_regenerate" />
+
         <EditTextPreference
             android:key="pref_remote_dns"
             android:summary="@string/summary_pref_remote_dns"

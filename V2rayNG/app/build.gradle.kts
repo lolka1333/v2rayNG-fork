@@ -7,6 +7,7 @@ plugins {
 android {
     namespace = "com.v2ray.ang"
     compileSdk = 36
+    ndkVersion = "29.0.13113456"
 
     defaultConfig {
         applicationId = "com.v2ray.ang"
@@ -38,6 +39,15 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("debugKey") {
+            storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -45,6 +55,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debugKey")
         }
     }
 

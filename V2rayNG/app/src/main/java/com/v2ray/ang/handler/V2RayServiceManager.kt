@@ -173,6 +173,7 @@ object V2RayServiceManager {
         }
 
         Log.i(AppConfig.TAG, "StartCore-Manager: Starting core loop for ${config.remarks}")
+        SocksAuthManager.loadOrGenerate()
         val result = V2rayConfigManager.getV2rayConfig(service, guid)
         if (!result.status) {
             Log.e(AppConfig.TAG, "StartCore-Manager: Failed to get V2Ray config")

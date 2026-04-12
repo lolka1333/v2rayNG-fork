@@ -46,8 +46,14 @@ data class V2rayConfig(
             var userLevel: Int? = null,
             var name: String? = null,
             @SerializedName("MTU")
-            var mtu: Int? = null
-        )
+            var mtu: Int? = null,
+            var accounts: List<SocksAccountBean>? = null
+        ) {
+            data class SocksAccountBean(
+                val user: String,
+                val pass: String
+            )
+        }
 
         data class SniffingBean(
             var enabled: Boolean,

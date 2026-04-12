@@ -223,6 +223,14 @@
     <string name="title_pref_socks_port">Local proxy port</string>
     <string name="summary_pref_socks_port">Local proxy port</string>
 
+    <string name="title_pref_socks5_username">Local proxy username</string>
+    <string name="summary_pref_socks5_username_copied">Username copied to clipboard</string>
+    <string name="title_pref_socks5_password">Local proxy password</string>
+    <string name="summary_pref_socks5_password_copied">Password copied to clipboard</string>
+    <string name="title_pref_socks5_regenerate">Regenerate proxy credentials</string>
+    <string name="summary_pref_socks5_regenerate">Tap to generate new username and password</string>
+    <string name="toast_socks5_regenerated">New proxy credentials generated</string>
+
     <string name="title_pref_local_dns_port">Local DNS port</string>
     <string name="summary_pref_local_dns_port">Local DNS port</string>
 

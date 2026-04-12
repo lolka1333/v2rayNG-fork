@@ -1,10 +1,15 @@
 package com.v2ray.ang.ui
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.preference.CheckBoxPreference
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
@@ -13,6 +18,7 @@ import com.v2ray.ang.AngApplication
 import com.v2ray.ang.AppConfig
 import com.v2ray.ang.AppConfig.VPN
 import com.v2ray.ang.R
+import com.v2ray.ang.handler.SocksAuthManager
 import com.v2ray.ang.extension.toLongEx
 import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.handler.SubscriptionUpdater
@@ -55,6 +61,10 @@ class SettingsActivity : BaseActivity() {
         private val hevTunLogLevel by lazy { findPreference<ListPreference>(AppConfig.PREF_HEV_TUNNEL_LOGLEVEL) }
         private val hevTunRwTimeout by lazy { findPreference<EditTextPreference>(AppConfig.PREF_HEV_TUNNEL_RW_TIMEOUT) }
         private val useHevTun by lazy { findPreference<CheckBoxPreference>(AppConfig.PREF_USE_HEV_TUNNEL) }
+
+        private val socks5Username by lazy { findPreference<Preference>(AppConfig.PREF_SOCKS5_USERNAME) }
+        private val socks5Password by lazy { findPreference<Preference>(AppConfig.PREF_SOCKS5_PASSWORD) }
+        private val socks5Regenerate by lazy { findPreference<Preference>("pref_socks5_regenerate") }
 
         override fun onCreatePreferences(bundle: Bundle?, s: String?) {
             // Use MMKV as the storage backend for all Preferences
@@ -165,6 +175,10 @@ class SettingsActivity : BaseActivity() {
             // Initialize fragment-dependent UI states
             updateFragment(MmkvManager.decodeSettingsBool(AppConfig.PREF_FRAGMENT_ENABLED, false))
 
+            // Initialize SOCKS5 credentials (generate if first launch)
+            SocksAuthManager.loadOrGenerate()
+            updateSocks5CredentialsSummary()
+
             // Initialize auto-update interval state
             autoUpdateInterval?.isEnabled = MmkvManager.decodeSettingsBool(AppConfig.SUBSCRIPTION_AUTO_UPDATE, false)
         }
@@ -261,6 +275,33 @@ class SettingsActivity : BaseActivity() {
         private fun updateHevTunSettings(enabled: Boolean) {
             hevTunLogLevel?.isEnabled = enabled
             hevTunRwTimeout?.isEnabled = enabled
+        }
+
+        private fun updateSocks5CredentialsSummary() {
+            socks5Username?.summary = SocksAuthManager.username
+            socks5Password?.summary = SocksAuthManager.password
+
+            socks5Username?.setOnPreferenceClickListener {
+                copyToClipboard("socks5_user", SocksAuthManager.username)
+                Toast.makeText(requireContext(), R.string.summary_pref_socks5_username_copied, Toast.LENGTH_SHORT).show()
+                true
+            }
+            socks5Password?.setOnPreferenceClickListener {
+                copyToClipboard("socks5_pass", SocksAuthManager.password)
+                Toast.makeText(requireContext(), R.string.summary_pref_socks5_password_copied, Toast.LENGTH_SHORT).show()
+                true
+            }
+            socks5Regenerate?.setOnPreferenceClickListener {
+                SocksAuthManager.regenerate()
+                updateSocks5CredentialsSummary()
+                Toast.makeText(requireContext(), R.string.toast_socks5_regenerated, Toast.LENGTH_SHORT).show()
+                true
+            }
+        }
+
+        private fun copyToClipboard(label: String, text: String) {
+            val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            clipboard.setPrimaryClip(ClipData.newPlainText(label, text))
         }
     }
 
